@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.269">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Luis Lapo, Mathew Cisneros, Cristian Calle">
+<meta name="dcterms.date" content="2024-08-08">
+
+<title>Simulación de Procesos de Hawkes en Finanzas</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="Reporte_Hawkes_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Reporte_Hawkes_files/libs/quarto-html/quarto.js"></script>
+<script src="Reporte_Hawkes_files/libs/quarto-html/popper.min.js"></script>
+<script src="Reporte_Hawkes_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="Reporte_Hawkes_files/libs/quarto-html/anchor.min.js"></script>
+<link href="Reporte_Hawkes_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Reporte_Hawkes_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="Reporte_Hawkes_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="Reporte_Hawkes_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="Reporte_Hawkes_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Simulación de Procesos de Hawkes en Finanzas</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Luis Lapo, Mathew Cisneros, Cristian Calle </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">August 8, 2024</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="introducción" class="level1">
+<h1>Introducción</h1>
+<p>Los mercados financieros son sistemas complejos donde los eventos suelen ocurrir en patrones que pueden parecer aleatorios, pero a menudo muestran características de agrupamiento y dependencia temporal. Estos patrones, conocidos como <strong>clustering</strong>, pueden observarse en diversas áreas como la volatilidad de los precios y la frecuencia de las transacciones. Modelar estos fenómenos es crucial para comprender mejor el comportamiento del mercado y desarrollar estrategias comerciales efectivas.</p>
+<p>Un proceso puntual es un tipo de proceso estocástico utilizado para modelar la ocurrencia de eventos en el tiempo o en el espacio. Entre estos, el <strong>proceso de Hawkes</strong>, introducido por Hawkes en 1971, se destaca por su capacidad para capturar el efecto de excitación propio de los eventos, donde la ocurrencia de un evento incrementa temporalmente la probabilidad de ocurrencia de futuros eventos.</p>
+<p>El <strong>proceso de Hawkes</strong> se ha convertido en una herramienta popular en el análisis de datos financieros debido a su habilidad para modelar la dependencia temporal y el agrupamiento de eventos. Este proceso es particularmente útil en el contexto de <strong>transacciones de alta frecuencia</strong>, donde los eventos como las compras y ventas de activos financieros ocurren en rápida sucesión y muestran patrones de auto-excitación.</p>
+<p>En este proyecto, nuestro objetivo es simular y analizar el comportamiento de los procesos de Hawkes aplicados a diferentes mercados financieros. Utilizaremos datos de alta frecuencia de mercados como el de los indicadores <strong>QQQ</strong> y el <strong>BTC-USD</strong> para ilustrar cómo los procesos de Hawkes pueden modelar el clustering de transacciones. Exploraremos tanto modelos univariantes para capturar los efectos de auto-excitación.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="QQQ_Velas.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">Gráfico de Velas Japonesas y Volumenes de Transacción indicador QQQ</figcaption><p></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="BTC-USD.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">Gráfico de Velas Japonesas y Volumenes de Transacción indicador BTC-USD</figcaption><p></p>
+</figure>
+</div>
+</section>
+<section id="revisión-de-la-literatura" class="level1">
+<h1>Revisión de la Literatura</h1>
+<section id="teoría-de-procesos-puntuales" class="level2">
+<h2 class="anchored" data-anchor-id="teoría-de-procesos-puntuales">Teoría de Procesos Puntuales</h2>
+<p>Los procesos puntuales son herramientas matemáticas que se utilizan para modelar la ocurrencia de eventos en el tiempo o en el espacio. Un proceso puntual puede describirse como una colección de tiempos de llegada que representan la ocurrencia de eventos. La teoría de procesos puntuales es amplia y ha sido aplicada en diversas áreas, incluyendo la física, biología, y, por supuesto, las finanzas. Algunos textos fundamentales en este campo incluyen el trabajo de Cox e Isham (1980) y el libro de Snyder y Miller (2012), que proporcionan una base sólida para la comprensión de estos procesos.</p>
+</section>
+<section id="proceso-de-hawkes" class="level2">
+<h2 class="anchored" data-anchor-id="proceso-de-hawkes">Proceso de Hawkes</h2>
+<p>El proceso de Hawkes, introducido por Hawkes en 1971, es un tipo de proceso puntual que permite modelar la auto-excitación y el clustering de eventos. En un proceso de Hawkes, la ocurrencia de un evento aumenta temporalmente la tasa de ocurrencia de futuros eventos. Esto es particularmente útil para modelar fenómenos donde los eventos tienden a agruparse en el tiempo, como es el caso en los mercados financieros.</p>
+<p>Hawkes y Oakes (1974) demostraron que todos los procesos de auto-excitación estacionarios con intensidad finita pueden ser representados como procesos de Poisson de clustering. La estimación de parámetros en procesos de Hawkes ha sido desarrollada por varios autores, incluyendo a Ozaki (1979) y Ogata (1981), quienes propusieron métodos de estimación de máxima verosimilitud y simulación. Más recientemente, Bacry et al.&nbsp;(2015) proporcionaron una revisión exhaustiva de las aplicaciones del proceso de Hawkes en finanzas, mostrando cómo estos modelos pueden capturar la dinámica compleja de los mercados financieros.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="QQQ_eventos.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">Eventos considerando un umbral del 1% QQQ</figcaption><p></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Bitcoin_eventos.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">Eventos considerando un umbral del 1% BTC-USD</figcaption><p></p>
+</figure>
+</div>
+</section>
+<section id="aplicaciones-en-finanzas" class="level2">
+<h2 class="anchored" data-anchor-id="aplicaciones-en-finanzas">Aplicaciones en Finanzas</h2>
+<p>La aplicación de procesos de Hawkes en finanzas ha ganado popularidad debido a su capacidad para modelar la dependencia temporal y el clustering de eventos como transacciones y cambios de precios. Bauwens y Hautsch (2009) exploraron el uso de procesos puntuales en el comercio de alta frecuencia, mientras que Heusser (2013) aplicó el proceso de Hawkes al mercado de Bitcoin. Hewlett (2006) y Embrechts et al.&nbsp;(2011) demostraron cómo los procesos de Hawkes pueden ser utilizados para modelar la llegada de órdenes de compra y venta en mercados de divisas y acciones.</p>
+<p>En el contexto de mercados de alta frecuencia, los procesos de Hawkes se utilizan para modelar la llegada de órdenes de compra y venta, permitiendo capturar tanto los efectos de auto-excitación (cuando una orden provoca más órdenes del mismo tipo) como los efectos de excitación cruzada (cuando una orden de compra, por ejemplo, provoca órdenes de venta). Lorenzen (2012) y Crowley (2013) proporcionaron aplicaciones detalladas de estos modelos en datos de alta frecuencia, mostrando su capacidad para capturar patrones de agrupamiento y dependencia temporal.</p>
+<p>En resumen, la literatura existente demuestra que los procesos de Hawkes son herramientas efectivas para modelar y analizar la dinámica de los mercados financieros. Su capacidad para capturar el clustering y la auto-excitación de eventos los hace particularmente adecuados para el análisis de transacciones de alta frecuencia y otros fenómenos financieros.</p>
+</section>
+</section>
+<section id="marco-teórico" class="level1">
+<h1>Marco Teórico</h1>
+<section id="proceso-de-hawkes-con-kernel-exponencial" class="level2">
+<h2 class="anchored" data-anchor-id="proceso-de-hawkes-con-kernel-exponencial">Proceso de Hawkes con Kernel Exponencial</h2>
+<p>Un proceso de Hawkes es un proceso puntual que se caracteriza por su capacidad de modelar la autointensidad, es decir, eventos pasados influyen en la probabilidad de ocurrencia de eventos futuros. Es ampliamente utilizado en la modelización de eventos financieros y otros procesos estocásticos donde la ocurrencia de eventos puede desencadenar una mayor frecuencia de eventos futuros.</p>
+<p>Para un proceso de Hawkes, la intensidad condicional <span class="math inline">\(\lambda(t)\)</span> en el tiempo <span class="math inline">\(t\)</span> está dada por:</p>
+<p><span class="math display">\[
+\lambda(t) = \mu + \sum_{t_i &lt; t} \phi(t - t_i)
+\]</span></p>
+<p>donde:</p>
+<ul>
+<li><span class="math inline">\(\mu\)</span> es la tasa base o tasa de fondo, que representa la intensidad de ocurrencia de eventos en ausencia de eventos anteriores.</li>
+<li><span class="math inline">\(\phi(t - t_i)\)</span> es el kernel, que describe cómo los eventos pasados <span class="math inline">\(t_i\)</span> afectan la intensidad actual <span class="math inline">\(\lambda(t)\)</span>.</li>
+</ul>
+<p>En el caso de un kernel exponencial, <span class="math inline">\(\phi(t)\)</span> toma la forma:</p>
+<p><span class="math display">\[
+\phi(t) = \alpha e^{-\beta t}
+\]</span></p>
+<p>donde:</p>
+<ul>
+<li><span class="math inline">\(\alpha\)</span> es un parámetro de escala que determina la magnitud del impacto de un evento.</li>
+<li><span class="math inline">\(\beta\)</span> es un parámetro de decaimiento que determina la rapidez con la que el impacto de un evento decrece con el tiempo.</li>
+</ul>
+<p>Sustituyendo el kernel exponencial en la fórmula general de la intensidad condicional, tenemos:</p>
+<p><span class="math display">\[
+\lambda(t) = \mu + \sum_{t_i &lt; t} \alpha e^{-\beta (t - t_i)}
+\]</span></p>
+<p>Este modelo captura la dependencia temporal de eventos, permitiendo que eventos recientes tengan un mayor impacto en la intensidad actual que eventos más antiguos.</p>
+<section id="propiedades-del-proceso-de-hawkes" class="level3">
+<h3 class="anchored" data-anchor-id="propiedades-del-proceso-de-hawkes">Propiedades del Proceso de Hawkes</h3>
+<p>Algunas propiedades clave del proceso de Hawkes con kernel exponencial incluyen:</p>
+<ol type="1">
+<li><strong>Autocorrelación Positiva</strong>: Los eventos tienden a ocurrir en rachas debido a la retroalimentación positiva del kernel.</li>
+<li><strong>Clustering</strong>: La estructura de autointensidad permite la formación de clusters de eventos.</li>
+<li><strong>Estacionaridad</strong>: Bajo ciertas condiciones en los parámetros <span class="math inline">\(\mu\)</span>, <span class="math inline">\(\alpha\)</span> y <span class="math inline">\(\beta\)</span>, el proceso puede ser estacionario.</li>
+</ol>
+<p>El proceso de Hawkes es una herramienta poderosa para modelar secuencias de eventos en diversas aplicaciones, especialmente en finanzas, donde puede capturar la dinámica compleja de la ocurrencia de eventos.</p>
+</section>
+</section>
+<section id="valores-de-los-parámetros-en-un-proceso-de-hawkes-con-kernel-exponencial" class="level2">
+<h2 class="anchored" data-anchor-id="valores-de-los-parámetros-en-un-proceso-de-hawkes-con-kernel-exponencial">Valores de los Parámetros en un Proceso de Hawkes con Kernel Exponencial</h2>
+<p>En un proceso de Hawkes con kernel exponencial, los parámetros <span class="math inline">\(\mu\)</span>, <span class="math inline">\(\alpha\)</span> y <span class="math inline">\(\beta\)</span> son tomados como constantes para simplificar el modelo y facilitar su análisis. Estos parámetros tienen roles específicos y deben cumplir ciertas características para que el modelo sea válido y útil en la práctica.</p>
+<section id="parámetro-mu" class="level3">
+<h3 class="anchored" data-anchor-id="parámetro-mu">Parámetro <span class="math inline">\(\mu\)</span></h3>
+<p>El parámetro <span class="math inline">\(\mu\)</span> es la tasa base o tasa de fondo, que representa la intensidad de ocurrencia de eventos en ausencia de eventos anteriores. Este valor debe ser no negativo:</p>
+<p><span class="math display">\[
+\mu \geq 0
+\]</span></p>
+</section>
+<section id="parámetro-alpha" class="level3">
+<h3 class="anchored" data-anchor-id="parámetro-alpha">Parámetro <span class="math inline">\(\alpha\)</span></h3>
+<p>El parámetro <span class="math inline">\(\alpha\)</span> es un parámetro de escala que determina la magnitud del impacto de un evento sobre la intensidad del proceso. Este valor también debe ser no negativo:</p>
+<p><span class="math display">\[
+\alpha \geq 0
+\]</span></p>
+</section>
+<section id="parámetro-beta" class="level3">
+<h3 class="anchored" data-anchor-id="parámetro-beta">Parámetro <span class="math inline">\(\beta\)</span></h3>
+<p>El parámetro <span class="math inline">\(\beta\)</span> es un parámetro de decaimiento que determina la rapidez con la que el impacto de un evento decrece con el tiempo. Este valor debe ser positivo para asegurar que el impacto de eventos pasados disminuya con el tiempo:</p>
+<p><span class="math display">\[
+\beta &gt; 0
+\]</span></p>
+</section>
+<section id="condiciones-de-estabilidad" class="level3">
+<h3 class="anchored" data-anchor-id="condiciones-de-estabilidad">Condiciones de Estabilidad</h3>
+<p>Para que el proceso de Hawkes sea estacionario y no explote, es necesario que el efecto acumulativo de los eventos no sea demasiado grande. Esto se traduce en la siguiente condición de estabilidad:</p>
+<p><span class="math display">\[
+\alpha &lt; \beta
+\]</span></p>
+<p>Esta condición asegura que la retroalimentación positiva del proceso no cause una explosión de eventos en el tiempo.</p>
+</section>
+<section id="interpretación-de-los-parámetros" class="level3">
+<h3 class="anchored" data-anchor-id="interpretación-de-los-parámetros">Interpretación de los Parámetros</h3>
+<ul>
+<li><strong><span class="math inline">\(\mu\)</span></strong>: Una tasa base alta <span class="math inline">\(\mu\)</span> implica que los eventos ocurren con frecuencia incluso sin la influencia de eventos pasados. Un valor bajo de <span class="math inline">\(\mu\)</span> sugiere que los eventos son raros en ausencia de autointensidad.</li>
+<li><strong><span class="math inline">\(\alpha\)</span></strong>: Un valor alto de <span class="math inline">\(\alpha\)</span> indica que un evento pasado tiene un gran impacto en la probabilidad de futuros eventos. Un valor bajo de <span class="math inline">\(\alpha\)</span> sugiere que los eventos pasados tienen un efecto menor.</li>
+<li><strong><span class="math inline">\(\beta\)</span></strong>: Un valor alto de <span class="math inline">\(\beta\)</span> significa que el impacto de los eventos pasados decae rápidamente, mientras que un valor bajo de <span class="math inline">\(\beta\)</span> implica que el impacto de los eventos persiste durante más tiempo.</li>
+</ul>
+</section>
+<section id="ejemplo-de-parámetros" class="level3">
+<h3 class="anchored" data-anchor-id="ejemplo-de-parámetros">Ejemplo de Parámetros</h3>
+<p>Supongamos que se eligen los siguientes valores de parámetros para un proceso de Hawkes:</p>
+<ul>
+<li><span class="math inline">\(\mu = 0.5\)</span>: La tasa base es moderada, lo que implica una ocurrencia regular de eventos en ausencia de influencia de eventos pasados.</li>
+<li><span class="math inline">\(\alpha = 0.8\)</span>: Un evento pasado incrementa significativamente la probabilidad de futuros eventos.</li>
+<li><span class="math inline">\(\beta = 1.2\)</span>: El impacto de un evento pasado decrece moderadamente rápido.</li>
+</ul>
+<p>Estos valores cumplen la condición de estabilidad (<span class="math inline">\(\alpha &lt; \beta\)</span>) y permiten modelar un proceso donde los eventos tienen una influencia notable pero decreciente con el tiempo.</p>
+</section>
+</section>
+<section id="análisis-de-residuos-en-procesos-de-hawkes-normalidad-heterocedasticidad-autocorrelación-y-estacionariedad" class="level2">
+<h2 class="anchored" data-anchor-id="análisis-de-residuos-en-procesos-de-hawkes-normalidad-heterocedasticidad-autocorrelación-y-estacionariedad">Análisis de Residuos en Procesos de Hawkes: Normalidad, Heterocedasticidad, Autocorrelación y Estacionariedad</h2>
+<p>El análisis de residuos es fundamental en la validación de modelos estadísticos y econométricos, incluidos los procesos de Hawkes. Los residuos representan las discrepancias entre los eventos observados y los predichos por el modelo. Evaluar sus propiedades permite verificar la adecuación del modelo y la validez de las inferencias realizadas. A continuación, se describen los aspectos clave que deben analizarse: normalidad, heterocedasticidad, autocorrelación y estacionariedad, con un enfoque particular en procesos de Hawkes.</p>
+<section id="normalidad" class="level3">
+<h3 class="anchored" data-anchor-id="normalidad">Normalidad</h3>
+<section id="importancia" class="level4">
+<h4 class="anchored" data-anchor-id="importancia">Importancia</h4>
+<p>En muchos modelos estadísticos, se supone que los residuos son normalmente distribuidos. Sin embargo, en el contexto de los procesos de Hawkes, la normalidad de los residuos no siempre es una suposición crítica, dado que estos modelos se centran en la ocurrencia y la intensidad de eventos. Aun así, la normalidad puede facilitar el uso de ciertas técnicas estadísticas y la interpretación de resultados.</p>
+</section>
+<section id="evaluación" class="level4">
+<h4 class="anchored" data-anchor-id="evaluación">Evaluación</h4>
+<ul>
+<li><strong>Histogramas y Q-Q plots</strong>: Visualización de los residuos para verificar la forma de la distribución.</li>
+<li><strong>Pruebas estadísticas</strong>: Pruebas como Shapiro-Wilk o Kolmogorov-Smirnov para evaluar la normalidad de los residuos.</li>
+</ul>
+</section>
+</section>
+<section id="heterocedasticidad" class="level3">
+<h3 class="anchored" data-anchor-id="heterocedasticidad">Heterocedasticidad</h3>
+<section id="importancia-1" class="level4">
+<h4 class="anchored" data-anchor-id="importancia-1">Importancia</h4>
+<p>La heterocedasticidad en los residuos de un proceso de Hawkes indica que la variabilidad de los eventos no es constante. Esto puede afectar la precisión de las estimaciones de los parámetros y la validez de las inferencias. En procesos de Hawkes, la heterocedasticidad puede reflejar la naturaleza dinámica y dependiente del tiempo de la intensidad de los eventos.</p>
+</section>
+<section id="evaluación-1" class="level4">
+<h4 class="anchored" data-anchor-id="evaluación-1">Evaluación</h4>
+<ul>
+<li><strong>Gráficos de dispersión</strong>: Residuales versus valores predichos para observar patrones en la variabilidad.</li>
+<li><strong>Pruebas estadísticas</strong>: Pruebas como Breusch-Pagan y White para detectar heterocedasticidad.</li>
+</ul>
+</section>
+</section>
+<section id="autocorrelación" class="level3">
+<h3 class="anchored" data-anchor-id="autocorrelación">Autocorrelación</h3>
+<section id="importancia-2" class="level4">
+<h4 class="anchored" data-anchor-id="importancia-2">Importancia</h4>
+<p>La autocorrelación de los residuos es un aspecto crítico en los procesos de Hawkes, ya que estos modelos se basan en la idea de que los eventos pasados influyen en la ocurrencia de eventos futuros. La presencia de autocorrelación en los residuos puede indicar que el modelo no ha capturado completamente la estructura de dependencia temporal de los eventos.</p>
+</section>
+<section id="evaluación-2" class="level4">
+<h4 class="anchored" data-anchor-id="evaluación-2">Evaluación</h4>
+<ul>
+<li><strong>Gráficos de autocorrelación</strong>: ACF (Autocorrelation Function) y PACF (Partial Autocorrelation Function) para visualizar la autocorrelación de los residuos.</li>
+<li><strong>Pruebas estadísticas</strong>: Pruebas como Durbin-Watson y Breusch-Godfrey para detectar autocorrelación.</li>
+</ul>
+</section>
+</section>
+<section id="estacionariedad" class="level3">
+<h3 class="anchored" data-anchor-id="estacionariedad">Estacionariedad</h3>
+<section id="importancia-3" class="level4">
+<h4 class="anchored" data-anchor-id="importancia-3">Importancia</h4>
+<p>La estacionariedad implica que las propiedades estadísticas de la serie temporal (media, varianza, autocorrelación) son constantes a lo largo del tiempo. Para los procesos de Hawkes, la estacionariedad es esencial para asegurar que las predicciones sean fiables y que el modelo no exhiba un comportamiento explosivo.</p>
+</section>
+<section id="evaluación-3" class="level4">
+<h4 class="anchored" data-anchor-id="evaluación-3">Evaluación</h4>
+<ul>
+<li><strong>Gráficos de series temporales</strong>: Observación de tendencias y estacionalidad en los residuos.</li>
+<li><strong>Pruebas estadísticas</strong>: Pruebas como Dickey-Fuller aumentada (ADF) y KPSS para evaluar la estacionariedad.</li>
+</ul>
+<p>Analizar los residuos en términos de normalidad, heterocedasticidad, autocorrelación y estacionariedad es crucial para validar la adecuación de un modelo de proceso de Hawkes. Este análisis asegura que las suposiciones del modelo se cumplen y que las inferencias realizadas son válidas y fiables. Detectar y corregir problemas en estas áreas puede mejorar significativamente la precisión y la interpretabilidad del modelo, permitiendo una mejor comprensión y predicción de los eventos en estudio.</p>
+<p>A continuación presentamos los gráficos y resultados de los tests realizados:</p>
+</section>
+</section>
+</section>
+<section id="resultados-del-análisis-de-residuos-qqq" class="level2">
+<h2 class="anchored" data-anchor-id="resultados-del-análisis-de-residuos-qqq">Resultados del Análisis de Residuos QQQ</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Residuos_QQQ.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">Resultados del Análisis de Residuos QQQ</figcaption><p></p>
+</figure>
+</div>
+</section>
+<section id="resultados-del-análisis-de-residuos" class="level2">
+<h2 class="anchored" data-anchor-id="resultados-del-análisis-de-residuos">Resultados del Análisis de Residuos</h2>
+<section id="normalidad-1" class="level3">
+<h3 class="anchored" data-anchor-id="normalidad-1">Normalidad</h3>
+<ul>
+<li><strong>Prueba de Shapiro-Wilk</strong>:
+<ul>
+<li>Estadístico = 0.9903</li>
+<li>p-valor = 0.4680</li>
+</ul></li>
+</ul>
+<p><strong>Interpretación</strong>: Los residuos siguen una distribución normal (p-valor &gt; 0.05).</p>
+<p><strong>Significado e Influencia</strong>: La normalidad de los residuos sugiere que las suposiciones del modelo sobre la distribución de los errores son razonables. Aunque la normalidad no es una suposición estricta en los procesos de Hawkes, un resultado positivo en esta prueba facilita el uso de ciertos métodos estadísticos y la interpretación de los intervalos de confianza y las pruebas de hipótesis.</p>
+</section>
+<section id="heterocedasticidad-1" class="level3">
+<h3 class="anchored" data-anchor-id="heterocedasticidad-1">Heterocedasticidad</h3>
+<ul>
+<li><strong>Prueba de Breusch-Pagan</strong>:
+<ul>
+<li>Estadístico = 0.2882</li>
+<li>p-valor = 0.5913</li>
+</ul></li>
+</ul>
+<p><strong>Interpretación</strong>: No hay evidencia de heterocedasticidad (p-valor &gt; 0.05).</p>
+<p><strong>Significado e Influencia</strong>: La ausencia de heterocedasticidad implica que la variabilidad de los residuos es constante. Esto es deseable porque asegura que las estimaciones de los parámetros del modelo sean eficientes y que los intervalos de confianza sean fiables. En los procesos de Hawkes, esto significa que la intensidad de los eventos es modelada de manera consistente a lo largo del tiempo.</p>
+</section>
+<section id="autocorrelación-1" class="level3">
+<h3 class="anchored" data-anchor-id="autocorrelación-1">Autocorrelación</h3>
+<ul>
+<li><strong>Prueba de Breusch-Godfrey</strong>:
+<ul>
+<li>Estadístico = 14.1391</li>
+<li>p-valor = 0.0147</li>
+</ul></li>
+</ul>
+<p><strong>Interpretación</strong>: Hay evidencia de autocorrelación (p-valor &lt;= 0.05).</p>
+<p><strong>Significado e Influencia</strong>: La presencia de autocorrelación en los residuos indica que hay una dependencia temporal que no ha sido capturada completamente por el modelo de Hawkes. Esto puede sugerir que el modelo necesita ajustes adicionales, como la inclusión de términos de memoria más larga o la consideración de un kernel más complejo para mejorar la captura de la dinámica temporal de los eventos.</p>
+</section>
+<section id="estacionariedad-1" class="level3">
+<h3 class="anchored" data-anchor-id="estacionariedad-1">Estacionariedad</h3>
+<ul>
+<li><strong>Prueba de Dickey-Fuller (ADF)</strong>:
+<ul>
+<li>Estadístico = -11.0577</li>
+<li>p-valor = 0.0000</li>
+</ul></li>
+</ul>
+<p><strong>Interpretación</strong>: Los residuos son estacionarios (p-valor &lt;= 0.05).</p>
+<p><strong>Significado e Influencia</strong>: La estacionariedad de los residuos es crucial para asegurar que las propiedades estadísticas del modelo sean constantes a lo largo del tiempo. En el contexto de los procesos de Hawkes, la estacionariedad sugiere que la estructura temporal de los eventos es estable, lo que es fundamental para realizar predicciones fiables y para la validez de las inferencias estadísticas.</p>
+<section id="observaciones-respecto-al-análisis" class="level4">
+<h4 class="anchored" data-anchor-id="observaciones-respecto-al-análisis">Observaciones respecto al análisis</h4>
+<p>El análisis de residuos proporciona información valiosa sobre la adecuación del modelo de Hawkes. Los resultados indican que:</p>
+<ul>
+<li>Los residuos siguen una distribución normal, lo que es positivo para la aplicación de métodos estadísticos.</li>
+<li>No hay heterocedasticidad, lo que asegura que las estimaciones sean eficientes.</li>
+<li>Existe autocorrelación, lo que sugiere que el modelo puede necesitar ajustes adicionales para capturar completamente la dependencia temporal.</li>
+<li>Los residuos son estacionarios, lo que es fundamental para la estabilidad del modelo.</li>
+</ul>
+<p>Estos resultados influyen directamente en la interpretación y la validación del modelo de Hawkes, proporcionando una guía sobre posibles mejoras y confirmando la adecuación de las suposiciones básicas del modelo.</p>
+</section>
+</section>
+</section>
+<section id="resultados-del-análisis-de-residuos-btc-usd" class="level2">
+<h2 class="anchored" data-anchor-id="resultados-del-análisis-de-residuos-btc-usd">Resultados del Análisis de Residuos BTC-USD</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Residuos_BTC-USD.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">Resultados del Análisis de Residuos BTC-USD</figcaption><p></p>
+</figure>
+</div>
+<section id="normalidad-2" class="level3">
+<h3 class="anchored" data-anchor-id="normalidad-2">Normalidad</h3>
+<ul>
+<li><strong>Prueba de Shapiro-Wilk</strong>:
+<ul>
+<li>Estadístico = 0.9728</li>
+<li>p-valor = 0.0017</li>
+</ul></li>
+</ul>
+<p><strong>Interpretación</strong>: Los residuos no siguen una distribución normal (p-valor &lt;= 0.05).</p>
+<p><strong>Significado e Influencia</strong>: La no normalidad de los residuos sugiere que las suposiciones del modelo sobre la distribución de los errores pueden no ser válidas. En el contexto de los procesos de Hawkes, esto puede no ser un problema crítico, ya que la normalidad no es una suposición esencial. Sin embargo, la no normalidad podría afectar la precisión de ciertas inferencias estadísticas y la aplicabilidad de algunos métodos de análisis.</p>
+</section>
+<section id="heterocedasticidad-2" class="level3">
+<h3 class="anchored" data-anchor-id="heterocedasticidad-2">Heterocedasticidad</h3>
+<ul>
+<li><strong>Prueba de Breusch-Pagan</strong>:
+<ul>
+<li>Estadístico = 0.8022</li>
+<li>p-valor = 0.3704</li>
+</ul></li>
+</ul>
+<p><strong>Interpretación</strong>: No hay evidencia de heterocedasticidad (p-valor &gt; 0.05).</p>
+<p><strong>Significado e Influencia</strong>: La ausencia de heterocedasticidad implica que la variabilidad de los residuos es constante. Esto es deseable porque asegura que las estimaciones de los parámetros del modelo sean eficientes y que los intervalos de confianza sean fiables. En los procesos de Hawkes, esto significa que la intensidad de los eventos es modelada de manera consistente a lo largo del tiempo.</p>
+</section>
+<section id="autocorrelación-2" class="level3">
+<h3 class="anchored" data-anchor-id="autocorrelación-2">Autocorrelación</h3>
+<ul>
+<li><strong>Prueba de Breusch-Godfrey</strong>:
+<ul>
+<li>Estadístico = 8.7743</li>
+<li>p-valor = 0.1184</li>
+</ul></li>
+</ul>
+<p><strong>Interpretación</strong>: No hay evidencia de autocorrelación (p-valor &gt; 0.05).</p>
+<p><strong>Significado e Influencia</strong>: La ausencia de autocorrelación en los residuos indica que el modelo ha capturado adecuadamente la estructura de dependencia temporal de los eventos. Esto sugiere que el modelo de Hawkes está bien especificado y que las estimaciones de los parámetros no están sesgadas debido a la autocorrelación no modelada.</p>
+</section>
+<section id="estacionariedad-2" class="level3">
+<h3 class="anchored" data-anchor-id="estacionariedad-2">Estacionariedad</h3>
+<ul>
+<li><strong>Prueba de Dickey-Fuller (ADF)</strong>:
+<ul>
+<li>Estadístico = -7.6037</li>
+<li>p-valor = 0.0000</li>
+</ul></li>
+</ul>
+<p><strong>Interpretación</strong>: Los residuos son estacionarios (p-valor &lt;= 0.05).</p>
+<p><strong>Significado e Influencia</strong>: La estacionariedad de los residuos es crucial para asegurar que las propiedades estadísticas del modelo sean constantes a lo largo del tiempo. En el contexto de los procesos de Hawkes, la estacionariedad sugiere que la estructura temporal de los eventos es estable, lo que es fundamental para realizar predicciones fiables y para la validez de las inferencias estadísticas.</p>
+<section id="observaciones-respecto-al-análisis-1" class="level4">
+<h4 class="anchored" data-anchor-id="observaciones-respecto-al-análisis-1">Observaciones respecto al análisis</h4>
+<p>El análisis de residuos proporciona información valiosa sobre la adecuación del modelo de Hawkes. Los resultados indican que:</p>
+<ul>
+<li>Los residuos no siguen una distribución normal, lo que puede afectar algunas inferencias estadísticas, aunque no es crítico para el modelo de Hawkes.</li>
+<li>No hay heterocedasticidad, lo que asegura que las estimaciones sean eficientes.</li>
+<li>No hay autocorrelación, lo que sugiere que el modelo ha capturado adecuadamente la dependencia temporal de los eventos.</li>
+<li>Los residuos son estacionarios, lo que es fundamental para la estabilidad del modelo.</li>
+</ul>
+<p>Estos resultados influyen directamente en la interpretación y la validación del modelo de Hawkes, proporcionando una guía sobre posibles ajustes y confirmando la adecuación de las suposiciones básicas del modelo.</p>
+</section>
+</section>
+</section>
+<section id="comparación-entre-simulación-y-datos-reales" class="level2">
+<h2 class="anchored" data-anchor-id="comparación-entre-simulación-y-datos-reales">Comparación entre Simulación y Datos Reales</h2>
+<p>Para validar la efectividad del modelo de Hawkes y su capacidad para predecir eventos futuros, es esencial comparar los resultados de la simulación del modelo con los datos reales. Esta comparación ayuda a evaluar la precisión del modelo y a identificar posibles áreas de mejora.</p>
+<section id="procedimiento-de-simulación" class="level3">
+<h3 class="anchored" data-anchor-id="procedimiento-de-simulación">Procedimiento de Simulación</h3>
+<p>La simulación de un proceso de Hawkes implica generar una serie de eventos basada en los parámetros estimados (<span class="math inline">\(\mu\)</span>, <span class="math inline">\(\alpha\)</span> y <span class="math inline">\(\beta\)</span>). Los pasos generales para realizar la simulación son:</p>
+<ol type="1">
+<li><strong>Inicialización</strong>: Comenzar con una intensidad inicial <span class="math inline">\(\lambda(0) = \mu\)</span>.</li>
+<li><strong>Generación de Eventos</strong>: Utilizar los parámetros del modelo para generar tiempos de eventos sucesivos.</li>
+<li><strong>Actualización de la Intensidad</strong>: Actualizar la intensidad <span class="math inline">\(\lambda(t)\)</span> después de cada evento utilizando el kernel exponencial.</li>
+</ol>
+</section>
+<section id="comparación-con-datos-reales" class="level3">
+<h3 class="anchored" data-anchor-id="comparación-con-datos-reales">Comparación con Datos Reales</h3>
+<p>Para comparar la simulación con los datos reales, se pueden seguir estos pasos:</p>
+<ol type="1">
+<li><strong>Simulación de Eventos</strong>: Generar una serie de eventos utilizando los parámetros estimados del modelo de Hawkes.</li>
+<li><strong>Gráfica de Eventos</strong>: Comparar visualmente la serie temporal de eventos simulados con la serie de eventos observados.</li>
+</ol>
+</section>
+<section id="predicciones-basadas-en-eventos" class="level3">
+<h3 class="anchored" data-anchor-id="predicciones-basadas-en-eventos">Predicciones Basadas en Eventos</h3>
+<p>El modelo de Hawkes también permite realizar predicciones basadas en la ocurrencia de eventos pasados. Esto se puede lograr mediante los siguientes pasos:</p>
+<ol type="1">
+<li><strong>Calculo de la Intensidad Condicional</strong>: Utilizar los eventos observados hasta un tiempo <span class="math inline">\(t\)</span> para calcular la intensidad condicional <span class="math inline">\(\lambda(t)\)</span>.</li>
+<li><strong>Predicción de Eventos Futuros</strong>: Utilizar la intensidad condicional <span class="math inline">\(\lambda(t)\)</span> para predecir la probabilidad de ocurrencia de eventos futuros.</li>
+<li><strong>Evaluación de Predicciones</strong>: Comparar las predicciones del modelo con los eventos futuros observados para evaluar la precisión predictiva del modelo.</li>
+</ol>
+</section>
+</section>
+</section>
+<section id="estrategias-de-compra-y-venta" class="level1">
+<h1>Estrategias de Compra y Venta</h1>
+<p>A continuación se describen diversas estrategias de compra y venta basadas en indicadores técnicos. Estas estrategias pueden ser utilizadas para tomar decisiones informadas en el mercado financiero.</p>
+<section id="estrategia-de-cruce-de-medias" class="level2">
+<h2 class="anchored" data-anchor-id="estrategia-de-cruce-de-medias">Estrategia de Cruce de Medias</h2>
+<p><strong>Descripción</strong>: Compra cuando la media móvil simple (SMA) de 14 periodos cruza por encima de la media móvil exponencial (EMA) de 14 periodos. Venta cuando la SMA cruza por debajo de la EMA.</p>
+<p>Compra: SMA(14) cruza por encima de EMA(14)<br>
+Venta: SMA(14) cruza por debajo de EMA(14)</p>
+</section>
+<section id="estrategia-rsi" class="level2">
+<h2 class="anchored" data-anchor-id="estrategia-rsi">Estrategia RSI</h2>
+<p><strong>Descripción</strong>: Compra cuando el Índice de Fuerza Relativa (RSI) de 14 periodos está por debajo de 30 (sobrevendido). Venta cuando el RSI está por encima de 70 (sobrecomprado).</p>
+<p>Compra: RSI(14) &lt; 30<br>
+Venta: RSI(14) &gt; 70</p>
+</section>
+<section id="estrategia-macd" class="level2">
+<h2 class="anchored" data-anchor-id="estrategia-macd">Estrategia MACD</h2>
+<p><strong>Descripción</strong>: Compra cuando la línea MACD cruza por encima de la línea de señal. Venta cuando la línea MACD cruza por debajo de la línea de señal.</p>
+<p>Compra: Línea MACD cruza por encima de la línea de señal<br>
+Venta: Línea MACD cruza por debajo de la línea de señal</p>
+</section>
+<section id="estrategia-de-bandas-de-bollinger" class="level2">
+<h2 class="anchored" data-anchor-id="estrategia-de-bandas-de-bollinger">Estrategia de Bandas de Bollinger</h2>
+<p><strong>Descripción</strong>: Compra cuando el precio de cierre cruza por debajo de la banda inferior de Bollinger. Venta cuando el precio de cierre cruza por encima de la banda superior de Bollinger.</p>
+<p>Compra: Precio de cierre cruza por debajo de la banda inferior de Bollinger<br>
+Venta: Precio de cierre cruza por encima de la banda superior de Bollinger</p>
+</section>
+<section id="estrategias-mixtas" class="level2">
+<h2 class="anchored" data-anchor-id="estrategias-mixtas">Estrategias Mixtas</h2>
+<section id="estrategia-mixta-cruce-de-medias-y-rsi" class="level3">
+<h3 class="anchored" data-anchor-id="estrategia-mixta-cruce-de-medias-y-rsi">Estrategia Mixta Cruce de Medias y RSI</h3>
+<p><strong>Descripción</strong>: Compra cuando la SMA de 14 periodos cruza por encima de la EMA de 14 periodos y el RSI de 14 periodos está por debajo de 30. Venta cuando la SMA cruza por debajo de la EMA y el RSI está por encima de 70.</p>
+<p>Compra: SMA(14) cruza por encima de EMA(14) y RSI(14) &lt; 30<br>
+Venta: SMA(14) cruza por debajo de EMA(14) y RSI(14) &gt; 70</p>
+</section>
+<section id="estrategia-mixta-cruce-de-medias-y-macd" class="level3">
+<h3 class="anchored" data-anchor-id="estrategia-mixta-cruce-de-medias-y-macd">Estrategia Mixta Cruce de Medias y MACD</h3>
+<p><strong>Descripción</strong>: Compra cuando la SMA de 14 periodos cruza por encima de la EMA de 14 periodos y la línea MACD cruza por encima de la línea de señal. Venta cuando la SMA cruza por debajo de la EMA y la línea MACD cruza por debajo de la línea de señal.</p>
+<p>Compra: SMA(14) cruza por encima de EMA(14) y línea MACD cruza por encima de la línea de señal<br>
+Venta: SMA(14) cruza por debajo de EMA(14) y línea MACD cruza por debajo de la línea de señal</p>
+</section>
+<section id="estrategia-mixta-cruce-de-medias-y-bandas-de-bollinger" class="level3">
+<h3 class="anchored" data-anchor-id="estrategia-mixta-cruce-de-medias-y-bandas-de-bollinger">Estrategia Mixta Cruce de Medias y Bandas de Bollinger</h3>
+<p><strong>Descripción</strong>: Compra cuando la SMA de 14 periodos cruza por encima de la EMA de 14 periodos y el precio de cierre cruza por debajo de la banda inferior de Bollinger. Venta cuando la SMA cruza por debajo de la EMA y el precio de cierre cruza por encima de la banda superior de Bollinger.</p>
+<p>Compra: SMA(14) cruza por encima de EMA(14) y precio de cierre cruza por debajo de la banda inferior de Bollinger<br>
+Venta: SMA(14) cruza por debajo de EMA(14) y precio de cierre cruza por encima de la banda superior de Bollinger</p>
+</section>
+<section id="estrategia-mixta-rsi-y-macd" class="level3">
+<h3 class="anchored" data-anchor-id="estrategia-mixta-rsi-y-macd">Estrategia Mixta RSI y MACD</h3>
+<p><strong>Descripción</strong>: Compra cuando el RSI de 14 periodos está por debajo de 30 y la línea MACD cruza por encima de la línea de señal. Venta cuando el RSI está por encima de 70 y la línea MACD cruza por debajo de la línea de señal.</p>
+<p>Compra: RSI(14) &lt; 30 y línea MACD cruza por encima de la línea de señal<br>
+Venta: RSI(14) &gt; 70 y línea MACD cruza por debajo de la línea de señal</p>
+</section>
+<section id="estrategia-mixta-rsi-y-bandas-de-bollinger" class="level3">
+<h3 class="anchored" data-anchor-id="estrategia-mixta-rsi-y-bandas-de-bollinger">Estrategia Mixta RSI y Bandas de Bollinger</h3>
+<p><strong>Descripción</strong>: Compra cuando el RSI de 14 periodos está por debajo de 30 y el precio de cierre cruza por debajo de la banda inferior de Bollinger. Venta cuando el RSI está por encima de 70 y el precio de cierre cruza por encima de la banda superior de Bollinger.</p>
+<p>Compra: RSI(14) &lt; 30 y precio de cierre cruza por debajo de la banda inferior de Bollinger<br>
+Venta: RSI(14) &gt; 70 y precio de cierre cruza por encima de la banda superior de Bollinger</p>
+</section>
+<section id="estrategia-mixta-macd-y-bandas-de-bollinger" class="level3">
+<h3 class="anchored" data-anchor-id="estrategia-mixta-macd-y-bandas-de-bollinger">Estrategia Mixta MACD y Bandas de Bollinger</h3>
+<p><strong>Descripción</strong>: Compra cuando la línea MACD cruza por encima de la línea de señal y el precio de cierre cruza por debajo de la banda inferior de Bollinger. Venta cuando la línea MACD cruza por debajo de la línea de señal y el precio de cierre cruza por encima de la banda superior de Bollinger.</p>
+<p>Compra: Línea MACD cruza por encima de la línea de señal y precio de cierre cruza por debajo de la banda inferior de Bollinger<br>
+Venta: Línea MACD cruza por debajo de la línea de señal y precio de cierre cruza por encima de la banda superior de Bollinger</p>
+</section>
+<section id="estrategia-mixta-cruce-de-medias-rsi-y-macd" class="level3">
+<h3 class="anchored" data-anchor-id="estrategia-mixta-cruce-de-medias-rsi-y-macd">Estrategia Mixta Cruce de Medias, RSI y MACD</h3>
+<p><strong>Descripción</strong>: Compra cuando la SMA de 14 periodos cruza por encima de la EMA de 14 periodos, el RSI de 14 periodos está por debajo de 30 y la línea MACD cruza por encima de la línea de señal. Venta cuando la SMA cruza por debajo de la EMA, el RSI está por encima de 70 y la línea MACD cruza por debajo de la línea de señal.</p>
+<p>Compra: SMA(14) cruza por encima de EMA(14), RSI(14) &lt; 30 y línea MACD cruza por encima de la línea de señal<br>
+Venta: SMA(14) cruza por debajo de EMA(14), RSI(14) &gt; 70 y línea MACD cruza por debajo de la línea de señal</p>
+</section>
+<section id="estrategia-mixta-cruce-de-medias-rsi-y-bandas-de-bollinger" class="level3">
+<h3 class="anchored" data-anchor-id="estrategia-mixta-cruce-de-medias-rsi-y-bandas-de-bollinger">Estrategia Mixta Cruce de Medias, RSI y Bandas de Bollinger</h3>
+<p><strong>Descripción</strong>: Compra cuando la SMA de 14 periodos cruza por encima de la EMA de 14 periodos, el RSI de 14 periodos está por debajo de 30 y el precio de cierre cruza por debajo de la banda inferior de Bollinger. Venta cuando la SMA cruza por debajo de la EMA, el RSI está por encima de 70 y el precio de cierre cruza por encima de la banda superior de Bollinger.</p>
+<p>Compra: SMA(14) cruza por encima de EMA(14), RSI(14) &lt; 30 y precio de cierre cruza por debajo de la banda inferior de Bollinger<br>
+Venta: SMA(14) cruza por debajo de EMA(14), RSI(14) &gt; 70 y precio de cierre cruza por encima de la banda superior de Bollinger</p>
+</section>
+<section id="estrategia-mixta-cruce-de-medias-macd-y-bandas-de-bollinger" class="level3">
+<h3 class="anchored" data-anchor-id="estrategia-mixta-cruce-de-medias-macd-y-bandas-de-bollinger">Estrategia Mixta Cruce de Medias, MACD y Bandas de Bollinger</h3>
+<p><strong>Descripción</strong>: Compra cuando la SMA de 14 periodos cruza por encima de la EMA de 14 periodos, la línea MACD cruza por encima de la línea de señal y el precio de cierre cruza por debajo de la banda inferior de Bollinger. Venta cuando la SMA cruza por debajo de la EMA, la línea MACD cruza por debajo de la línea de señal y el precio de cierre cruza por encima de la banda superior de Bollinger.</p>
+<p>Compra: SMA(14) cruza por encima de EMA(14), línea MACD cruza por encima de la línea de señal y precio de cierre cruza por debajo de la banda inferior de Bollinger<br>
+Venta: SMA(14) cruza por debajo de EMA(14), línea MACD cruza por debajo de la línea de señal y precio de cierre cruza por encima de la banda superior de Bollinger</p>
+</section>
+<section id="estrategia-mixta-rsi-macd-y-bandas-de-bollinger" class="level3">
+<h3 class="anchored" data-anchor-id="estrategia-mixta-rsi-macd-y-bandas-de-bollinger">Estrategia Mixta RSI, MACD y Bandas de Bollinger</h3>
+<p><strong>Descripción</strong>: Compra cuando el RSI de 14 periodos está por debajo de 30, la línea MACD cruza por encima de la línea de señal y el precio de cierre cruza por debajo de la banda inferior de Bollinger. Venta cuando el RSI está por encima de 70, la línea MACD cruza por debajo de la línea de señal y el precio de cierre cruza por encima de la banda superior de Bollinger.</p>
+<p>Compra: RSI(14) &lt; 30, línea MACD cruza por encima de la línea de señal y precio de cierre cruza por debajo de la banda inferior de Bollinger<br>
+Venta: RSI(14) &gt; 70, línea MACD cruza por debajo de la línea de señal y precio de cierre cruza por encima de la banda superior de Bollinger</p>
+</section>
+</section>
+</section>
+<section id="qqq" class="level1">
+<h1>QQQ</h1>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Estrategias_QQQ.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">Resultados Estrategias QQQ</figcaption><p></p>
+</figure>
+</div>
+<section id="btc-usd" class="level4">
+<h4 class="anchored" data-anchor-id="btc-usd">BTC-USD</h4>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Estrategias_BTC-USD.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">Resultados Estrategias BTC-USD</figcaption><p></p>
+</figure>
+</div>
+</section>
+</section>
+<section id="conclusión-sobre-el-proceso-de-hawkes" class="level1">
+<h1>Conclusión sobre el Proceso de Hawkes</h1>
+<p>El proceso de Hawkes es una herramienta poderosa y versátil para modelar la ocurrencia de eventos que exhiben dependencia temporal. Su capacidad para capturar la autointensidad, donde los eventos pasados incrementan la probabilidad de futuros eventos, lo hace especialmente útil en diversas aplicaciones, desde la modelización de actividades en mercados financieros hasta la previsión de terremotos y otras secuencias de eventos en ciencias sociales y naturales.</p>
+<section id="futuras-mejoras-y-ajustes" class="level3">
+<h3 class="anchored" data-anchor-id="futuras-mejoras-y-ajustes">Futuras Mejoras y Ajustes</h3>
+<p>A pesar de su utilidad, el proceso de Hawkes puede requerir ajustes adicionales para capturar completamente la complejidad de ciertos conjuntos de datos. La inclusión de términos de memoria más larga o la utilización de kernels más complejos podrían mejorar aún más la precisión del modelo.</p>
+<p>En conclusión, el proceso de Hawkes es una herramienta esencial para el análisis de secuencias de eventos dependientes en el tiempo. Su flexibilidad y capacidad para incorporar la dependencia temporal lo hacen invaluable en múltiples disciplinas, proporcionando insights profundos y predicciones precisas sobre la ocurrencia de eventos futuros.</p>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

@@ -1,0 +1,766 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+%
+\documentclass[
+  letterpaper,
+  DIV=11,
+  numbers=noendperiod]{scrartcl}
+
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+% Make \paragraph and \subparagraph free-standing
+\ifx\paragraph\undefined\else
+  \let\oldparagraph\paragraph
+  \renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+  \let\oldsubparagraph\subparagraph
+  \renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+
+\KOMAoption{captions}{tableheading}
+\makeatletter
+\makeatother
+\makeatletter
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\AtBeginDocument{%
+\ifdefined\contentsname
+  \renewcommand*\contentsname{Table of contents}
+\else
+  \newcommand\contentsname{Table of contents}
+\fi
+\ifdefined\listfigurename
+  \renewcommand*\listfigurename{List of Figures}
+\else
+  \newcommand\listfigurename{List of Figures}
+\fi
+\ifdefined\listtablename
+  \renewcommand*\listtablename{List of Tables}
+\else
+  \newcommand\listtablename{List of Tables}
+\fi
+\ifdefined\figurename
+  \renewcommand*\figurename{Figure}
+\else
+  \newcommand\figurename{Figure}
+\fi
+\ifdefined\tablename
+  \renewcommand*\tablename{Table}
+\else
+  \newcommand\tablename{Table}
+\fi
+}
+\@ifpackageloaded{float}{}{\usepackage{float}}
+\floatstyle{ruled}
+\@ifundefined{c@chapter}{\newfloat{codelisting}{h}{lop}}{\newfloat{codelisting}{h}{lop}[chapter]}
+\floatname{codelisting}{Listing}
+\newcommand*\listoflistings{\listof{codelisting}{List of Listings}}
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
+\makeatother
+\makeatletter
+\@ifpackageloaded{tcolorbox}{}{\usepackage[many]{tcolorbox}}
+\makeatother
+\makeatletter
+\@ifundefined{shadecolor}{\definecolor{shadecolor}{rgb}{.97, .97, .97}}
+\makeatother
+\makeatletter
+\makeatother
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same} % disable monospaced font for URLs
+\hypersetup{
+  pdftitle={Simulación de Procesos de Hawkes en Finanzas},
+  pdfauthor={Luis Lapo, Mathew Cisneros, Cristian Calle},
+  colorlinks=true,
+  linkcolor={blue},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={Blue},
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Simulación de Procesos de Hawkes en Finanzas}
+\author{Luis Lapo, Mathew Cisneros, Cristian Calle}
+\date{8/8/24}
+
+\begin{document}
+\maketitle
+\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[frame hidden, breakable, interior hidden, sharp corners, borderline west={3pt}{0pt}{shadecolor}, boxrule=0pt, enhanced]}{\end{tcolorbox}}\fi
+
+\hypertarget{introducciuxf3n}{%
+\section{Introducción}\label{introducciuxf3n}}
+
+Los mercados financieros son sistemas complejos donde los eventos suelen
+ocurrir en patrones que pueden parecer aleatorios, pero a menudo
+muestran características de agrupamiento y dependencia temporal. Estos
+patrones, conocidos como \textbf{clustering}, pueden observarse en
+diversas áreas como la volatilidad de los precios y la frecuencia de las
+transacciones. Modelar estos fenómenos es crucial para comprender mejor
+el comportamiento del mercado y desarrollar estrategias comerciales
+efectivas.
+
+Un proceso puntual es un tipo de proceso estocástico utilizado para
+modelar la ocurrencia de eventos en el tiempo o en el espacio. Entre
+estos, el \textbf{proceso de Hawkes}, introducido por Hawkes en 1971, se
+destaca por su capacidad para capturar el efecto de excitación propio de
+los eventos, donde la ocurrencia de un evento incrementa temporalmente
+la probabilidad de ocurrencia de futuros eventos.
+
+El \textbf{proceso de Hawkes} se ha convertido en una herramienta
+popular en el análisis de datos financieros debido a su habilidad para
+modelar la dependencia temporal y el agrupamiento de eventos. Este
+proceso es particularmente útil en el contexto de \textbf{transacciones
+de alta frecuencia}, donde los eventos como las compras y ventas de
+activos financieros ocurren en rápida sucesión y muestran patrones de
+auto-excitación.
+
+En este proyecto, nuestro objetivo es simular y analizar el
+comportamiento de los procesos de Hawkes aplicados a diferentes mercados
+financieros. Utilizaremos datos de alta frecuencia de mercados como el
+de los indicadores \textbf{QQQ} y el \textbf{BTC-USD} para ilustrar cómo
+los procesos de Hawkes pueden modelar el clustering de transacciones.
+Exploraremos tanto modelos univariantes para capturar los efectos de
+auto-excitación.
+
+\begin{figure}
+
+{\centering \includegraphics{QQQ_Velas.png}
+
+}
+
+\caption{Gráfico de Velas Japonesas y Volumenes de Transacción indicador
+QQQ}
+
+\end{figure}
+
+\begin{figure}
+
+{\centering \includegraphics{BTC-USD.png}
+
+}
+
+\caption{Gráfico de Velas Japonesas y Volumenes de Transacción indicador
+BTC-USD}
+
+\end{figure}
+
+\hypertarget{revisiuxf3n-de-la-literatura}{%
+\section{Revisión de la Literatura}\label{revisiuxf3n-de-la-literatura}}
+
+\hypertarget{teoruxeda-de-procesos-puntuales}{%
+\subsection{Teoría de Procesos
+Puntuales}\label{teoruxeda-de-procesos-puntuales}}
+
+Los procesos puntuales son herramientas matemáticas que se utilizan para
+modelar la ocurrencia de eventos en el tiempo o en el espacio. Un
+proceso puntual puede describirse como una colección de tiempos de
+llegada que representan la ocurrencia de eventos. La teoría de procesos
+puntuales es amplia y ha sido aplicada en diversas áreas, incluyendo la
+física, biología, y, por supuesto, las finanzas. Algunos textos
+fundamentales en este campo incluyen el trabajo de Cox e Isham (1980) y
+el libro de Snyder y Miller (2012), que proporcionan una base sólida
+para la comprensión de estos procesos.
+
+\hypertarget{proceso-de-hawkes}{%
+\subsection{Proceso de Hawkes}\label{proceso-de-hawkes}}
+
+El proceso de Hawkes, introducido por Hawkes en 1971, es un tipo de
+proceso puntual que permite modelar la auto-excitación y el clustering
+de eventos. En un proceso de Hawkes, la ocurrencia de un evento aumenta
+temporalmente la tasa de ocurrencia de futuros eventos. Esto es
+particularmente útil para modelar fenómenos donde los eventos tienden a
+agruparse en el tiempo, como es el caso en los mercados financieros.
+
+Hawkes y Oakes (1974) demostraron que todos los procesos de
+auto-excitación estacionarios con intensidad finita pueden ser
+representados como procesos de Poisson de clustering. La estimación de
+parámetros en procesos de Hawkes ha sido desarrollada por varios
+autores, incluyendo a Ozaki (1979) y Ogata (1981), quienes propusieron
+métodos de estimación de máxima verosimilitud y simulación. Más
+recientemente, Bacry et al.~(2015) proporcionaron una revisión
+exhaustiva de las aplicaciones del proceso de Hawkes en finanzas,
+mostrando cómo estos modelos pueden capturar la dinámica compleja de los
+mercados financieros.
+
+\emph{Eventos considerando un umbral del 1\% QQQ}
+\includegraphics{QQQ_eventos.png}
+
+\emph{Eventos considerando un umbral del 1\% BTC-USD}
+\includegraphics{Bitcoin_eventos.png}
+
+\hypertarget{aplicaciones-en-finanzas}{%
+\subsection{Aplicaciones en Finanzas}\label{aplicaciones-en-finanzas}}
+
+La aplicación de procesos de Hawkes en finanzas ha ganado popularidad
+debido a su capacidad para modelar la dependencia temporal y el
+clustering de eventos como transacciones y cambios de precios. Bauwens y
+Hautsch (2009) exploraron el uso de procesos puntuales en el comercio de
+alta frecuencia, mientras que Heusser (2013) aplicó el proceso de Hawkes
+al mercado de Bitcoin. Hewlett (2006) y Embrechts et al.~(2011)
+demostraron cómo los procesos de Hawkes pueden ser utilizados para
+modelar la llegada de órdenes de compra y venta en mercados de divisas y
+acciones.
+
+En el contexto de mercados de alta frecuencia, los procesos de Hawkes se
+utilizan para modelar la llegada de órdenes de compra y venta,
+permitiendo capturar tanto los efectos de auto-excitación (cuando una
+orden provoca más órdenes del mismo tipo) como los efectos de excitación
+cruzada (cuando una orden de compra, por ejemplo, provoca órdenes de
+venta). Lorenzen (2012) y Crowley (2013) proporcionaron aplicaciones
+detalladas de estos modelos en datos de alta frecuencia, mostrando su
+capacidad para capturar patrones de agrupamiento y dependencia temporal.
+
+En resumen, la literatura existente demuestra que los procesos de Hawkes
+son herramientas efectivas para modelar y analizar la dinámica de los
+mercados financieros. Su capacidad para capturar el clustering y la
+auto-excitación de eventos los hace particularmente adecuados para el
+análisis de transacciones de alta frecuencia y otros fenómenos
+financieros.
+
+\hypertarget{marco-teuxf3rico}{%
+\section{Marco Teórico}\label{marco-teuxf3rico}}
+
+\hypertarget{proceso-de-hawkes-con-kernel-exponencial}{%
+\subsection{Proceso de Hawkes con Kernel
+Exponencial}\label{proceso-de-hawkes-con-kernel-exponencial}}
+
+Un proceso de Hawkes es un proceso puntual que se caracteriza por su
+capacidad de modelar la autointensidad, es decir, eventos pasados
+influyen en la probabilidad de ocurrencia de eventos futuros. Es
+ampliamente utilizado en la modelización de eventos financieros y otros
+procesos estocásticos donde la ocurrencia de eventos puede desencadenar
+una mayor frecuencia de eventos futuros.
+
+Para un proceso de Hawkes, la intensidad condicional \(\lambda(t)\) en
+el tiempo \(t\) está dada por:
+
+\[
+\lambda(t) = \mu + \sum_{t_i < t} \phi(t - t_i)
+\]
+
+donde:
+
+\begin{itemize}
+\tightlist
+\item
+  \(\mu\) es la tasa base o tasa de fondo, que representa la intensidad
+  de ocurrencia de eventos en ausencia de eventos anteriores.
+\item
+  \(\phi(t - t_i)\) es el kernel, que describe cómo los eventos pasados
+  \(t_i\) afectan la intensidad actual \(\lambda(t)\).
+\end{itemize}
+
+En el caso de un kernel exponencial, \(\phi(t)\) toma la forma:
+
+\[
+\phi(t) = \alpha e^{-\beta t}
+\]
+
+donde:
+
+\begin{itemize}
+\tightlist
+\item
+  \(\alpha\) es un parámetro de escala que determina la magnitud del
+  impacto de un evento.
+\item
+  \(\beta\) es un parámetro de decaimiento que determina la rapidez con
+  la que el impacto de un evento decrece con el tiempo.
+\end{itemize}
+
+Sustituyendo el kernel exponencial en la fórmula general de la
+intensidad condicional, tenemos:
+
+\[
+\lambda(t) = \mu + \sum_{t_i < t} \alpha e^{-\beta (t - t_i)}
+\]
+
+Este modelo captura la dependencia temporal de eventos, permitiendo que
+eventos recientes tengan un mayor impacto en la intensidad actual que
+eventos más antiguos.
+
+\hypertarget{propiedades-del-proceso-de-hawkes}{%
+\subsubsection{Propiedades del Proceso de
+Hawkes}\label{propiedades-del-proceso-de-hawkes}}
+
+Algunas propiedades clave del proceso de Hawkes con kernel exponencial
+incluyen:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Autocorrelación Positiva}: Los eventos tienden a ocurrir en
+  rachas debido a la retroalimentación positiva del kernel.
+\item
+  \textbf{Clustering}: La estructura de autointensidad permite la
+  formación de clusters de eventos.
+\item
+  \textbf{Estacionaridad}: Bajo ciertas condiciones en los parámetros
+  \(\mu\), \(\alpha\) y \(\beta\), el proceso puede ser estacionario.
+\end{enumerate}
+
+El proceso de Hawkes es una herramienta poderosa para modelar secuencias
+de eventos en diversas aplicaciones, especialmente en finanzas, donde
+puede capturar la dinámica compleja de la ocurrencia de eventos.
+
+\hypertarget{valores-de-los-paruxe1metros-en-un-proceso-de-hawkes-con-kernel-exponencial}{%
+\subsection{Valores de los Parámetros en un Proceso de Hawkes con Kernel
+Exponencial}\label{valores-de-los-paruxe1metros-en-un-proceso-de-hawkes-con-kernel-exponencial}}
+
+En un proceso de Hawkes con kernel exponencial, los parámetros \(\mu\),
+\(\alpha\) y \(\beta\) son tomados como constantes para simplificar el
+modelo y facilitar su análisis. Estos parámetros tienen roles
+específicos y deben cumplir ciertas características para que el modelo
+sea válido y útil en la práctica.
+
+\hypertarget{paruxe1metro-mu}{%
+\subsubsection{\texorpdfstring{Parámetro
+\(\mu\)}{Parámetro \textbackslash mu}}\label{paruxe1metro-mu}}
+
+El parámetro \(\mu\) es la tasa base o tasa de fondo, que representa la
+intensidad de ocurrencia de eventos en ausencia de eventos anteriores.
+Este valor debe ser no negativo:
+
+\[
+\mu \geq 0
+\]
+
+\hypertarget{paruxe1metro-alpha}{%
+\subsubsection{\texorpdfstring{Parámetro
+\(\alpha\)}{Parámetro \textbackslash alpha}}\label{paruxe1metro-alpha}}
+
+El parámetro \(\alpha\) es un parámetro de escala que determina la
+magnitud del impacto de un evento sobre la intensidad del proceso. Este
+valor también debe ser no negativo:
+
+\[
+\alpha \geq 0
+\]
+
+\hypertarget{paruxe1metro-beta}{%
+\subsubsection{\texorpdfstring{Parámetro
+\(\beta\)}{Parámetro \textbackslash beta}}\label{paruxe1metro-beta}}
+
+El parámetro \(\beta\) es un parámetro de decaimiento que determina la
+rapidez con la que el impacto de un evento decrece con el tiempo. Este
+valor debe ser positivo para asegurar que el impacto de eventos pasados
+disminuya con el tiempo:
+
+\[
+\beta > 0
+\]
+
+\hypertarget{condiciones-de-estabilidad}{%
+\subsubsection{Condiciones de
+Estabilidad}\label{condiciones-de-estabilidad}}
+
+Para que el proceso de Hawkes sea estacionario y no explote, es
+necesario que el efecto acumulativo de los eventos no sea demasiado
+grande. Esto se traduce en la siguiente condición de estabilidad:
+
+\[
+\alpha < \beta
+\]
+
+Esta condición asegura que la retroalimentación positiva del proceso no
+cause una explosión de eventos en el tiempo.
+
+\hypertarget{interpretaciuxf3n-de-los-paruxe1metros}{%
+\subsubsection{Interpretación de los
+Parámetros}\label{interpretaciuxf3n-de-los-paruxe1metros}}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{\(\mu\)}: Una tasa base alta \(\mu\) implica que los eventos
+  ocurren con frecuencia incluso sin la influencia de eventos pasados.
+  Un valor bajo de \(\mu\) sugiere que los eventos son raros en ausencia
+  de autointensidad.
+\item
+  \textbf{\(\alpha\)}: Un valor alto de \(\alpha\) indica que un evento
+  pasado tiene un gran impacto en la probabilidad de futuros eventos. Un
+  valor bajo de \(\alpha\) sugiere que los eventos pasados tienen un
+  efecto menor.
+\item
+  \textbf{\(\beta\)}: Un valor alto de \(\beta\) significa que el
+  impacto de los eventos pasados decae rápidamente, mientras que un
+  valor bajo de \(\beta\) implica que el impacto de los eventos persiste
+  durante más tiempo.
+\end{itemize}
+
+\hypertarget{ejemplo-de-paruxe1metros}{%
+\subsubsection{Ejemplo de Parámetros}\label{ejemplo-de-paruxe1metros}}
+
+Supongamos que se eligen los siguientes valores de parámetros para un
+proceso de Hawkes:
+
+\begin{itemize}
+\tightlist
+\item
+  \(\mu = 0.5\): La tasa base es moderada, lo que implica una ocurrencia
+  regular de eventos en ausencia de influencia de eventos pasados.
+\item
+  \(\alpha = 0.8\): Un evento pasado incrementa significativamente la
+  probabilidad de futuros eventos.
+\item
+  \(\beta = 1.2\): El impacto de un evento pasado decrece moderadamente
+  rápido.
+\end{itemize}
+
+Estos valores cumplen la condición de estabilidad (\(\alpha < \beta\)) y
+permiten modelar un proceso donde los eventos tienen una influencia
+notable pero decreciente con el tiempo.
+
+\hypertarget{anuxe1lisis-de-residuos-en-procesos-de-hawkes-normalidad-heterocedasticidad-autocorrelaciuxf3n-y-estacionariedad}{%
+\subsection{Análisis de Residuos en Procesos de Hawkes: Normalidad,
+Heterocedasticidad, Autocorrelación y
+Estacionariedad}\label{anuxe1lisis-de-residuos-en-procesos-de-hawkes-normalidad-heterocedasticidad-autocorrelaciuxf3n-y-estacionariedad}}
+
+El análisis de residuos es fundamental en la validación de modelos
+estadísticos y econométricos, incluidos los procesos de Hawkes. Los
+residuos representan las discrepancias entre los eventos observados y
+los predichos por el modelo. Evaluar sus propiedades permite verificar
+la adecuación del modelo y la validez de las inferencias realizadas. A
+continuación, se describen los aspectos clave que deben analizarse:
+normalidad, heterocedasticidad, autocorrelación y estacionariedad, con
+un enfoque particular en procesos de Hawkes.
+
+\hypertarget{normalidad}{%
+\subsubsection{Normalidad}\label{normalidad}}
+
+\hypertarget{importancia}{%
+\paragraph{Importancia}\label{importancia}}
+
+En muchos modelos estadísticos, se supone que los residuos son
+normalmente distribuidos. Sin embargo, en el contexto de los procesos de
+Hawkes, la normalidad de los residuos no siempre es una suposición
+crítica, dado que estos modelos se centran en la ocurrencia y la
+intensidad de eventos. Aun así, la normalidad puede facilitar el uso de
+ciertas técnicas estadísticas y la interpretación de resultados.
+
+\hypertarget{evaluaciuxf3n}{%
+\paragraph{Evaluación}\label{evaluaciuxf3n}}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Histogramas y Q-Q plots}: Visualización de los residuos para
+  verificar la forma de la distribución.
+\item
+  \textbf{Pruebas estadísticas}: Pruebas como Shapiro-Wilk o
+  Kolmogorov-Smirnov para evaluar la normalidad de los residuos.
+\end{itemize}
+
+\hypertarget{heterocedasticidad}{%
+\subsubsection{Heterocedasticidad}\label{heterocedasticidad}}
+
+\hypertarget{importancia-1}{%
+\paragraph{Importancia}\label{importancia-1}}
+
+La heterocedasticidad en los residuos de un proceso de Hawkes indica que
+la variabilidad de los eventos no es constante. Esto puede afectar la
+precisión de las estimaciones de los parámetros y la validez de las
+inferencias. En procesos de Hawkes, la heterocedasticidad puede reflejar
+la naturaleza dinámica y dependiente del tiempo de la intensidad de los
+eventos.
+
+\hypertarget{evaluaciuxf3n-1}{%
+\paragraph{Evaluación}\label{evaluaciuxf3n-1}}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Gráficos de dispersión}: Residuales versus valores predichos
+  para observar patrones en la variabilidad.
+\item
+  \textbf{Pruebas estadísticas}: Pruebas como Breusch-Pagan y White para
+  detectar heterocedasticidad.
+\end{itemize}
+
+\hypertarget{autocorrelaciuxf3n}{%
+\subsubsection{Autocorrelación}\label{autocorrelaciuxf3n}}
+
+\hypertarget{importancia-2}{%
+\paragraph{Importancia}\label{importancia-2}}
+
+La autocorrelación de los residuos es un aspecto crítico en los procesos
+de Hawkes, ya que estos modelos se basan en la idea de que los eventos
+pasados influyen en la ocurrencia de eventos futuros. La presencia de
+autocorrelación en los residuos puede indicar que el modelo no ha
+capturado completamente la estructura de dependencia temporal de los
+eventos.
+
+\hypertarget{evaluaciuxf3n-2}{%
+\paragraph{Evaluación}\label{evaluaciuxf3n-2}}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Gráficos de autocorrelación}: ACF (Autocorrelation Function) y
+  PACF (Partial Autocorrelation Function) para visualizar la
+  autocorrelación de los residuos.
+\item
+  \textbf{Pruebas estadísticas}: Pruebas como Durbin-Watson y
+  Breusch-Godfrey para detectar autocorrelación.
+\end{itemize}
+
+\hypertarget{estacionariedad}{%
+\subsubsection{Estacionariedad}\label{estacionariedad}}
+
+\hypertarget{importancia-3}{%
+\paragraph{Importancia}\label{importancia-3}}
+
+La estacionariedad implica que las propiedades estadísticas de la serie
+temporal (media, varianza, autocorrelación) son constantes a lo largo
+del tiempo. Para los procesos de Hawkes, la estacionariedad es esencial
+para asegurar que las predicciones sean fiables y que el modelo no
+exhiba un comportamiento explosivo.
+
+\hypertarget{evaluaciuxf3n-3}{%
+\paragraph{Evaluación}\label{evaluaciuxf3n-3}}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Gráficos de series temporales}: Observación de tendencias y
+  estacionalidad en los residuos.
+\item
+  \textbf{Pruebas estadísticas}: Pruebas como Dickey-Fuller aumentada
+  (ADF) y KPSS para evaluar la estacionariedad.
+\end{itemize}
+
+Analizar los residuos en términos de normalidad, heterocedasticidad,
+autocorrelación y estacionariedad es crucial para validar la adecuación
+de un modelo de proceso de Hawkes. Este análisis asegura que las
+suposiciones del modelo se cumplen y que las inferencias realizadas son
+válidas y fiables. Detectar y corregir problemas en estas áreas puede
+mejorar significativamente la precisión y la interpretabilidad del
+modelo, permitiendo una mejor comprensión y predicción de los eventos en
+estudio.
+
+A continuación presentamos los gráficos y resultados de los tests
+realizados:
+
+\hypertarget{resultados-del-anuxe1lisis-de-residuos-qqq}{%
+\subsection{Resultados del Análisis de Residuos
+QQQ}\label{resultados-del-anuxe1lisis-de-residuos-qqq}}
+
+\begin{figure}
+
+{\centering \includegraphics{Residuos_QQQ.png}
+
+}
+
+\caption{Resultados del Análisis de Residuos QQQ}
+
+\end{figure}
+
+\hypertarget{resultados-del-anuxe1lisis-de-residuos}{%
+\subsection{Resultados del Análisis de
+Residuos}\label{resultados-del-anuxe1lisis-de-residuos}}
+
+\hypertarget{normalidad-1}{%
+\subsubsection{Normalidad}\label{normalidad-1}}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Prueba de Shapiro-Wilk}:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Estadístico = 0.9903
+  \item
+    p-valor = 0.4680
+  \end{itemize}
+\end{itemize}
+
+\textbf{Interpretación}: Los residuos siguen una distribución normal
+(p-valor \textgreater{} 0.05).
+
+\textbf{Significado e Influencia}: La normalidad de los residuos sugiere
+que las suposiciones del modelo sobre la distribución de los errores son
+razonables. Aunque la normalidad no es una suposición estricta en los
+procesos de Hawkes, un resultado positivo en esta prueba facilita el uso
+de ciertos métodos estadísticos y la interpretación de los intervalos de
+confianza y las pruebas de hipótesis.
+
+\hypertarget{heterocedasticidad-1}{%
+\subsubsection{Heterocedasticidad}\label{heterocedasticidad-1}}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Prueba de Breusch-Pagan}:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Estadístico = 0.2882
+  \item
+    p-valor = 0.5913
+  \end{itemize}
+\end{itemize}
+
+\textbf{Interpretación}: No hay evidencia de heterocedasticidad (p-valor
+\textgreater{} 0.05).
+
+\textbf{Significado e Influencia}: La ausencia de heterocedasticidad
+implica que la variabilidad de los residuos es constante. Esto es
+deseable porque asegura que las estimaciones de los parámetros del
+modelo sean eficientes y que los intervalos de confianza sean fiables.
+En los procesos de Hawkes, esto significa que la intensidad de los
+eventos es modelada de manera consistente a lo largo del tiempo.
+
+\hypertarget{autocorrelaciuxf3n-1}{%
+\subsubsection{Autocorrelación}\label{autocorrelaciuxf3n-1}}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Prueba de Breusch-Godfrey}:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Estadístico = 14.1391
+  \item
+    p-valor = 0.0147
+  \end{itemize}
+\end{itemize}
+
+\textbf{Interpretación}: Hay evidencia de autocorrelación (p-valor
+\textless= 0.05).
+
+\textbf{Significado e Influencia}: La presencia de autocorrelación en
+los residuos indica que hay una dependencia temporal que no ha sido
+capturada completamente por el modelo de Hawkes. Esto puede sugerir que
+el modelo necesita ajustes adicionales, como la inclusión de términos de
+memoria más larga o la consideración de un kernel más complejo para
+mejorar la captura de la dinámica temporal de los eventos.
+
+\hypertarget{estacionariedad-1}{%
+\subsubsection{Estacionariedad}\label{estacionariedad-1}}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Prueba de Dickey-Fuller (ADF)}:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Estadístico = -11.0577
+  \item
+    p-valor = 0.0000
+  \end{itemize}
+\end{itemize}
+
+\textbf{Interpretación}: Los residuos son estacionarios (p-valor
+\textless= 0.05).
+
+\textbf{Significado e Influencia}: La estacionariedad de los residuos es
+crucial para asegurar que las propiedades estadísticas del modelo sean
+constantes a lo largo del tiempo. En el contexto de los procesos de
+Hawkes, la estacionariedad sugiere que la estructura temporal de los
+eventos es estable, lo que es fundamental para realizar predicciones
+fiables y para la validez de las inferencias estadísticas.
+
+\hypertarget{observaciones-respecto-al-anuxe1lisis}{%
+\paragraph{Observaciones respecto al
+análisis}\label{observaciones-respecto-al-anuxe1lisis}}
+
+El análisis de residuos proporciona información valiosa sobre la
+adecuación del modelo de Hawkes. Los resultados indican que:
+
+\begin{itemize}
+\tightlist
+\item
+  Los residuos siguen una distribución normal, lo que es positivo para
+  la aplicación de métodos estadísticos.
+\item
+  No hay heterocedasticidad, lo que asegura que las estimaciones sean
+  eficientes.
+\item
+  Existe autocorrelación, lo que sugiere que el modelo puede necesitar
+  ajustes adicionales para capturar completamente la dependencia
+  temporal.
+\item
+  Los residuos son estacionarios, lo que es fundamental para la
+  estabilidad del modelo.
+\end{itemize}
+
+Estos resultados influyen directamente en la interpretación y la
+validación del modelo de Hawkes, proporcionando una guía sobre posibles
+mejoras y confirmando la adecuación de las suposiciones básicas del
+modelo.
+
+
+
+\end{document}
