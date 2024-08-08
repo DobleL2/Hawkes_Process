@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repository contains a comprehensive analysis of the Hawkes process applied to the financial indicators BIT-USD and QQQ. The Hawkes process is a self-exciting point process used for modeling events with clustering properties, such as financial transactions and price jumps. The project is implemented in R, leveraging its powerful statistical capabilities for financial analysis.
+This repository contains a comprehensive analysis of the Hawkes process applied to the financial indicators BIT-USD and QQQ. The Hawkes process is a self-exciting point process used for modeling events with clustering properties, such as financial transactions and price jumps. The project is implemented in python, leveraging its powerful statistical capabilities for financial analysis.
 
 ## Objectives
 
@@ -15,17 +15,7 @@ This repository contains a comprehensive analysis of the Hawkes process applied 
 
 - **Data Acquisition**: Scripts for fetching historical data of BIT-USD and QQQ from reliable financial data sources.
 - **Preprocessing**: Data cleaning and preprocessing tools to ensure high-quality input for modeling.
-- **Model Implementation**: Implementation of the Hawkes process using R packages such as `PtProcess`, `hawkes`, and custom functions for tailored analysis.
+- **Model Implementation**: Implementation of the Hawkes process using python.
 - **Simulation Engine**: Engine for simulating future events based on the fitted Hawkes model, allowing for scenario analysis and strategy development.
-- **Visualization Dashboards**: Interactive dashboards using `shiny` and `plotly` for visualizing event intensities, predicted trends, and historical data comparison.
+- **Visualization Dashboards**: Interactive dashboards using `streamlit` and `plotly` for visualizing event intensities, predicted trends, and historical data comparison.
 
-## Installation
-
-Clone the repository and install the required R packages:
-
-```r
-# Install required packages
-install.packages(c("PtProcess", "hawkes", "shiny", "plotly"))
-
-# Clone the repository
-git clone https://github.com/yourusername/Hawkes-Process-Finance-R.git
