@@ -8,6 +8,8 @@ This repository contains a comprehensive analysis of the Hawkes process applied 
 
 ## Objectives
 
+### General Objectives
+
 - **Understand the Behavior**: Analyze the clustering behavior of events in BIT-USD and QQQ to identify patterns and potential triggers.
 - **Modeling with Hawkes Process**: Implement and evaluate the Hawkes process model in R to capture the dynamics of these financial indicators.
 - **Simulations and Predictions**: Perform simulations to predict future price movements and volatility using the Hawkes process framework.
