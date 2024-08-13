@@ -2,7 +2,7 @@
 
 ## Overview
 
-### Nuevo subtitulo
+### Overview Description
 
 This repository contains a comprehensive analysis of the Hawkes process applied to the financial indicators BIT-USD and QQQ. The Hawkes process is a self-exciting point process used for modeling events with clustering properties, such as financial transactions and price jumps. The project is implemented in python, leveraging its powerful statistical capabilities for financial analysis.
 
